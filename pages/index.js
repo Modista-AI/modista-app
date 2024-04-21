@@ -112,7 +112,7 @@ const Home = () => {
         
         {/* Content */}
         <div className="relative z-20 p-4">
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome to Fashion Finder</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Welcome to Modista</h1>
           <p className="text-white mb-4">Explore, upload, and get recommendations on your clothing style!</p>
           <div className="flex flex-col space-y-4 mt-4">
           
