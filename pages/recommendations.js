@@ -175,23 +175,119 @@
 // export default Recommendations;
 
 
+// import Layout from '../components/Layout';
+// import { useState } from 'react';
+// import axios from 'axios';
+
+// const Recommendations = () => {
+//   const [input, setInput] = useState('');
+//   const [recommendations, setRecommendations] = useState([]);
+//   const [loading, setLoading] = useState(false);
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true); // Start loading
+//     try {
+//       const response = await axios.post('http://localhost:3000/recommend-clothing', {
+//         userEmail: 'agatenashons@gmail.com',
+//         description: input,
+//       });
+//       const jsonResponse = JSON.parse(response.data.recommendation.replace(/```json\n|\n```/g, ''));
+//       setRecommendations(jsonResponse.recommended_outfit);
+//     } catch (error) {
+//       console.error('Error getting recommendations:', error);
+//       setRecommendations([]);
+//     } finally {
+//       setLoading(false); // End loading
+//     }
+//   };
+
+//   return (
+//     <Layout>
+//       <div className="bg-gradient-to-br from-purple-500 to-pink-500 min-h-screen flex flex-col items-center justify-center p-4">
+//         <h1 className="text-3xl font-bold text-white text-center mb-6">Get Fashion Recommendations</h1>
+//         <form onSubmit={handleSubmit} className="w-full max-w-lg bg-white rounded-lg shadow-lg p-5">
+//           <input
+//             type="text"
+//             placeholder="What's the occasion?"
+//             className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-purple-500"
+//             onChange={(e) => setInput(e.target.value)}
+//           />
+//           <button type="submit" className="mt-4 w-full bg-green-600 text-white p-3 rounded hover:bg-green-700 transition-colors duration-200">
+//             Submit
+//           </button>
+//         </form>
+//         {loading && (
+//           <div className="flex justify-center items-center">
+//             <div className="loader">💖</div>
+//           </div>
+//         )}
+
+//         {recommendations.length > 0 && (
+//           <div className="mt-6 w-full max-w-4xl text-white">
+//             <h2 className="text-2xl font-bold">Recommendations:</h2>
+//             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+//               {recommendations.map((item, index) => (
+//                 <div key={index} className="bg-white rounded-lg shadow-lg p-4 flex flex-col items-center">
+//                   <img src={item.image_url} alt={item.item_type} className="w-full h-64 object-cover rounded-lg"/>
+//                   <div className="text-gray-800 text-sm mt-2">
+//                     <h3 className="text-lg font-semibold">{item.item_type}</h3>
+//                     <p>{item.description}</p>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </Layout>
+//   );
+// };
+
+// export default Recommendations;
+
+
+// pages/recommendations.js
 import Layout from '../components/Layout';
-import { useState } from 'react';
 import axios from 'axios';
+import { useState } from 'react';
+import { useUser } from '../context/UserContext';
 
 const Recommendations = () => {
   const [input, setInput] = useState('');
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { user } = useUser(); // Retrieve user context
+
+  // Function to get the email from context or local storage
+  const getUserEmail = () => {
+    if (user && user.email) {
+      return user.email;
+    }
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      return parsedUser.email;
+    }
+    return null;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userEmail = getUserEmail();
+    if (!userEmail) {
+      alert('User email not found. Please log in again.');
+      return;
+    }
+
     setLoading(true); // Start loading
     try {
       const response = await axios.post('http://localhost:3000/recommend-clothing', {
-        userEmail: 'agatenashons@gmail.com',
+        userEmail,
         description: input,
       });
+
+      // Parse response data if necessary
       const jsonResponse = JSON.parse(response.data.recommendation.replace(/```json\n|\n```/g, ''));
       setRecommendations(jsonResponse.recommended_outfit);
     } catch (error) {

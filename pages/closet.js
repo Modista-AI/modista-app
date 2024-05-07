@@ -1,49 +1,3 @@
-// import Layout from '../components/Layout';
-// import axios from 'axios';
-// import { useEffect, useState } from 'react';
-
-// const Closet = () => {
-//   const [items, setItems] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchCloset = async () => {
-//       try {
-//         const response = await axios.get('http://localhost:3000/user-closet', { params: { email: 'agatenashons@gmail.com' } }); // Change to dynamically get user email
-//         setItems(response.data.closet);
-//         setLoading(false);
-//       } catch (error) {
-//         console.error('Error fetching closet:', error);
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchCloset();
-//   }, []);
-
-//   return (
-//     <Layout>
-//       <div className="p-4">
-//         <h1 className="text-2xl font-bold text-center">My Closet</h1>
-//         {loading ? (
-//           <p>Loading...</p>
-//         ) : (
-//           <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
-//             {items.map((item, index) => (
-//               <div key={index} className="border p-2">
-//                 <img src={item.imageUrl} alt={item.description} className="w-full h-auto" />
-//                 <p>{item.description}</p>
-//               </div>
-//             ))}
-//           </div>
-//         )}
-//       </div>
-//     </Layout>
-//   );
-// };
-
-// export default Closet;
-
 
 // import Layout from '../components/Layout';
 // import axios from 'axios';
@@ -59,7 +13,7 @@
 //     const fetchCloset = async () => {
 //       try {
 //         const response = await axios.get('http://localhost:3000/user-closet', {
-//           params: { email: 'agatenashons@gmail.com' } // This should be dynamically set
+//           params: { email: 'user@example.com' } // This should dynamically fetch user email
 //         });
 //         setItems(response.data.closet);
 //         setLoading(false);
@@ -73,23 +27,27 @@
 //   }, []);
 
 //   const handleItemClick = (id) => {
-//     router.push(`/${id}`); // Route to clothing item detail page
+//     router.push(`/${id}`); // Ensure the route matches your setup for clothing item details
 //   };
 
 //   return (
 //     <Layout>
-//       <div className="p-4 bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen">
-//         <h1 className="text-2xl font-bold text-center text-gray-800 mb-4">My Closet</h1>
+//       <div className="p-4 bg-gradient-to-br from-cyan-500 to-blue-700 min-h-screen">
+//         <h1 className="text-3xl font-bold text-center text-white mb-6">My Fashion Closet</h1>
 //         {loading ? (
-//           <p className="text-center text-gray-600">Loading...</p>
+//           <div className="flex justify-center items-center h-64">
+//             <div className="loader"></div> {/* Consider adding a CSS spinner or loader animation here */}
+//           </div>
 //         ) : (
-//           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+//           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
 //             {items.map((item) => (
-//               <div key={item._id} className="cursor-pointer border p-2 rounded-lg shadow hover:shadow-md transition-shadow" onClick={() => handleItemClick(item._id)}>
-//                 <img src={item.imageUrl} alt={item.description} className="w-full h-40 object-cover rounded" />
-//                 <div className="mt-2">
-//                   <p className="text-sm font-semibold truncate">{item.style}</p>
-//                   <p className="text-xs text-gray-600">{item.material}</p>
+//               <div key={item._id} className="cursor-pointer transform hover:scale-105 transition-transform duration-300">
+//                 <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-xl">
+//                   <img src={item.imageUrl} alt={item.description} className="w-full h-40 object-cover" onClick={() => handleItemClick(item._id)} />
+//                   <div className="p-3 bg-white">
+//                     <p className="text-sm font-semibold truncate">{item.style}</p>
+//                     <p className="text-xs text-gray-600">{item.material}</p>
+//                   </div>
 //                 </div>
 //               </div>
 //             ))}
@@ -102,23 +60,44 @@
 
 // export default Closet;
 
-
-
+// pages/closet.js
 import Layout from '../components/Layout';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { useUser } from '../context/UserContext';
 
 const Closet = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser(); // Retrieve the user from the context
   const router = useRouter();
+
+  // Function to get the email from context or local storage
+  const getUserEmail = () => {
+    if (user && user.email) {
+      return user.email;
+    }
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const parsedUser = JSON.parse(storedUser);
+      return parsedUser.email;
+    }
+    return null;
+  };
 
   useEffect(() => {
     const fetchCloset = async () => {
+      const email = getUserEmail();
+      if (!email) {
+        console.error('User email not found. Redirecting to login...');
+        router.push('/login');
+        return;
+      }
+
       try {
         const response = await axios.get('http://localhost:3000/user-closet', {
-          params: { email: 'user@example.com' } // This should dynamically fetch user email
+          params: { email }
         });
         setItems(response.data.closet);
         setLoading(false);
@@ -129,7 +108,7 @@ const Closet = () => {
     };
 
     fetchCloset();
-  }, []);
+  }, [router]);
 
   const handleItemClick = (id) => {
     router.push(`/${id}`); // Ensure the route matches your setup for clothing item details
@@ -148,7 +127,12 @@ const Closet = () => {
             {items.map((item) => (
               <div key={item._id} className="cursor-pointer transform hover:scale-105 transition-transform duration-300">
                 <div className="overflow-hidden rounded-lg shadow-lg hover:shadow-xl">
-                  <img src={item.imageUrl} alt={item.description} className="w-full h-40 object-cover" onClick={() => handleItemClick(item._id)} />
+                  <img
+                    src={item.imageUrl}
+                    alt={item.description}
+                    className="w-full h-40 object-cover"
+                    onClick={() => handleItemClick(item._id)}
+                  />
                   <div className="p-3 bg-white">
                     <p className="text-sm font-semibold truncate">{item.style}</p>
                     <p className="text-xs text-gray-600">{item.material}</p>
@@ -164,4 +148,3 @@ const Closet = () => {
 };
 
 export default Closet;
-
