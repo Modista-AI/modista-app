@@ -118,7 +118,7 @@ const Closet = () => {
     const fetchCloset = async () => {
       try {
         const response = await axios.get('http://localhost:3000/user-closet', {
-          params: { email: 'agatenashons@gmail.com' } // This should dynamically fetch user email
+          params: { email: 'user@example.com' } // This should dynamically fetch user email
         });
         setItems(response.data.closet);
         setLoading(false);
