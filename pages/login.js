@@ -58,7 +58,7 @@ export default function Login() {
           {isLoading ? 'Redirecting...' : 'Login with Google'}
         </button>
         <p style={{ fontSize: '14px', color: '#333' }}>
-          Don't have an account? <span style={{ color: '#6658D3', cursor: 'pointer' }} onClick={handleGoogleLogin}>Sign up</span>
+          Don`&apos;`t have an account? <span style={{ color: '#6658D3', cursor: 'pointer' }} onClick={handleGoogleLogin}>Sign up</span>
         </p>
       </div>
     </div>
