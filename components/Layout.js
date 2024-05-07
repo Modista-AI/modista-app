@@ -139,11 +139,11 @@ const Layout = ({ children }) => {
               </p>
             </Link>
           </li>
-          <li className={isActive === '/signin' ? 'text-blue-500' : 'text-gray-300'}>
-            <Link href="/signin">
+          <li className={isActive === '/profile' ? 'text-blue-500' : 'text-gray-300'}>
+            <Link href="/profile">
               <p className="block text-center cursor-pointer">
                 <UserIcon className="h-6 w-6 mx-auto" />
-                <span className="text-xs">Sign In/Out</span>
+                <span className="text-xs">Profile</span>
               </p>
             </Link>
           </li>

@@ -10,11 +10,11 @@ export default function SteppingStone() {
 
   useEffect(() => {
     // Retrieve query parameters
-    const { email, token } = router.query;
+    const { email, token, name } = router.query;
 
-    if (email && token) {
+    if (email && token && name) {
       // Store user data via the context
-      setUserDetails(email, token);
+      setUserDetails(email, token, name);
     } else {
       // Redirect to login if no parameters are found and no valid user data is stored
       const storedUser = localStorage.getItem('user');

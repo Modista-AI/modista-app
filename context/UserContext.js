@@ -14,11 +14,11 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   // Function to save user data to state and local storage
-  const setUserDetails = (email, token) => {
-    const userObject = { email, token };
+  const setUserDetails = (email, token, name) => {
+    const userObject = { email, token, name };
 
     // Check if user data is different before updating
-    if (!user || user.email !== email || user.token !== token) {
+    if (!user || user.email !== email || user.token !== token || user.name !== name) {
       setUser(userObject);
 
       // Store user data in local storage
