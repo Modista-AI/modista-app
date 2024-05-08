@@ -18,7 +18,7 @@ const ClothingItem = () => {
 
   const fetchClothingItem = async (itemId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/clothing/${itemId}`);
+      const response = await axios.get(`https://modista-backend.vercel.app/clothing/${itemId}`);
       setItem(response.data.clothingItem);
       setLoading(false);
     } catch (error) {

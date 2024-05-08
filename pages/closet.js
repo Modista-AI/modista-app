@@ -35,7 +35,7 @@ const Closet = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:3000/user-closet', {
+        const response = await axios.get('https://modista-backend.vercel.app/user-closet', {
           params: { email }
         });
         setItems(response.data.closet);

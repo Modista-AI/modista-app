@@ -154,7 +154,7 @@ const Upload = () => {
     formData.append('userEmail', userEmail);
 
     try {
-      const response = await axios.post('http://localhost:3000/upload-and-analyze-clothing', formData, {
+      const response = await axios.post('https://modista-backend.vercel.app/upload-and-analyze-clothing', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

@@ -35,7 +35,7 @@ const Recommendations = () => {
 
     setLoading(true); // Start loading
     try {
-      const response = await axios.post('http://localhost:3000/recommend-clothing', {
+      const response = await axios.post('https://modista-backend.vercel.app/recommend-clothing', {
         userEmail,
         description: input,
       });

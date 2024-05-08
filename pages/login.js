@@ -11,7 +11,7 @@ export default function Login() {
   const handleGoogleLogin = () => {
     setIsLoading(true);
     // Redirect to the backend auth endpoint
-    router.push('http://localhost:3000/auth');
+    router.push('https://modista-backend.vercel.app/auth');
   };
 
   return (
