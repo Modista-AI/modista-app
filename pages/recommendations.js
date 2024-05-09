@@ -42,7 +42,8 @@ const Recommendations = () => {
 
       // Parse response data if necessary
       const jsonResponse = JSON.parse(response.data.recommendation.replace(/```json\n|\n```/g, ''));
-      console.log{jsonResponse}
+      console.error(jsonResponse);
+
       setRecommendations(jsonResponse.recommended_outfit);
     } catch (error) {
       console.error('Error getting recommendations:', error);
