@@ -4,13 +4,13 @@ import Layout from '../components/Layout';
 import axios from 'axios';
 import { useState } from 'react';
 import { useUser } from '../context/UserContext';
-import { CircularProgress } from '@mui/material'; // Import a loading spinner from Material UI
+import { CircularProgress } from '@mui/material';
 
 const Recommendations = () => {
   const [input, setInput] = useState('');
-  const [recommendations, setRecommendations] = useState([]);
+  const [recommendation, setRecommendation] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { user } = useUser(); // Retrieve user context
+  const { user } = useUser();
 
   // Function to get the email from context or local storage
   const getUserEmail = () => {
@@ -33,30 +33,33 @@ const Recommendations = () => {
       return;
     }
 
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      const response = await axios.post('https://modista-backend.vercel.app/recommend-clothing', {
+      const response = await axios.post('https://modista-backend.onrender.com/recommend-clothing', {
         userEmail,
         description: input,
       });
 
-      // Parse response data if necessary
-      const jsonResponse = JSON.parse(response.data.recommendation.replace(/```json\n|\n```/g, ''));
-      console.error(jsonResponse);
-
-      setRecommendations(jsonResponse.recommended_outfit);
+      // Validate the response structure and handle potential errors
+      const { status, message, data } = response.data;
+      if (status === 'success') {
+        setRecommendation(data.recommendation.Outfit);
+      } else {
+        console.error('Error:', message);
+        setRecommendation(null);
+      }
     } catch (error) {
       console.error('Error getting recommendations:', error);
-      setRecommendations([]);
+      setRecommendation(null);
     } finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
   return (
     <Layout>
       <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gradient-to-br from-indigo-500 to-pink-500">
-        <h1 className="text-4xl font-bold text-white text-center mb-8"> Recommendations</h1>
+        <h1 className="text-4xl font-bold text-white text-center mb-8">Recommendations</h1>
         <form onSubmit={handleSubmit} className="w-full max-w-xl bg-white rounded-xl shadow-2xl p-8">
           <input
             type="text"
@@ -70,30 +73,31 @@ const Recommendations = () => {
         </form>
         {loading && (
           <div className="mt-8">
-            <CircularProgress color="inherit" /> {/* Replaced with a more relevant loading spinner */}
+            <CircularProgress color="inherit" />
           </div>
         )}
-
-{Array.isArray(recommendations) && recommendations.length > 0 && (
-  <div className="mt-8 w-full max-w-5xl text-white">
-    <h2 className="text-3xl font-bold mb-4">Recommended Outfits:</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {recommendations.map((item, index) => (
-        <div
-          key={index}
-          className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center transform transition-transform duration-300 hover:scale-105"
-        >
-          <img src={item.image_url} alt={item.item_type} className="w-full h-56 object-cover rounded-lg mb-4" />
-          <div className="text-gray-800 text-center">
-            <h3 className="text-xl font-semibold">{item.item_type}</h3>
-            <p className="text-sm">{item.description}</p>
+        {recommendation && (
+          <div className="mt-8 w-full max-w-5xl text-white">
+            <h2 className="text-3xl font-bold mb-4">Recommended Outfit:</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {['Top', 'Bottom'].map((itemType) => {
+                const item = recommendation[itemType];
+                return (
+                  <div
+                    key={itemType}
+                    className="bg-white rounded-xl shadow-lg p-6 flex flex-col items-center transform transition-transform duration-300 hover:scale-105"
+                  >
+                    <img src={item.ImageURL} alt={itemType} className="w-full h-56 object-cover rounded-lg mb-4" />
+                    <div className="text-gray-800 text-center">
+                      <h3 className="text-xl font-semibold">{itemType}</h3>
+                      <p className="text-sm">{item.Description}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
+        )}
       </div>
     </Layout>
   );
