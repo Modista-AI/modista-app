@@ -256,7 +256,7 @@ const Profile = () => {
 
   const fetchPoints = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/getUserPoints?email=${encodeURIComponent(email)}`);
+      const response = await fetch(`https://modista-backend.vercel.app/getUserPoints?email=${encodeURIComponent(email)}`);
       const data = await response.json();
       if (data.points !== undefined) {
         setPoints(data.points);
